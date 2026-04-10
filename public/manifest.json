@@ -1,0 +1,17 @@
+{
+  "name": "GoFlix - Filmes e Séries",
+  "short_name": "GoFlix",
+  "description": "Assista seus filmes e séries favoritos online.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FF3D00",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

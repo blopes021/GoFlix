@@ -1,0 +1,152 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user-specific settings and profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique identifier for the user." },
+        "displayName": { "type": "string", "description": "The user's display name." },
+        "email": { "type": "string", "format": "email", "description": "The user's email address." },
+        "photoURL": { "type": "string", "format": "uri", "description": "The user's profile picture URL." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the profile was created." },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "The user's role." },
+        "points": { "type": "number", "description": "The user's accumulated reward points." },
+        "vipUntil": { "type": "string", "format": "date-time", "description": "Expiration date of VIP status." }
+      },
+      "required": ["uid", "email"]
+    },
+    "UserMovie": {
+      "title": "User Movie Interaction",
+      "description": "Represents a movie in a user's list or recently watched.",
+      "type": "object",
+      "properties": {
+        "movieId": { "type": "string", "description": "The TMDB ID of the movie." },
+        "title": { "type": "string" },
+        "posterUrl": { "type": "string" },
+        "mediaType": { "type": "string", "enum": ["movie", "tv"] },
+        "addedAt": { "type": "string", "format": "date-time" },
+        "lastWatched": { "type": "string", "format": "date-time" }
+      },
+      "required": ["movieId", "title"]
+    },
+    "ContentReport": {
+      "title": "Content Report",
+      "description": "A report about a movie or series that is unavailable or has issues.",
+      "type": "object",
+      "properties": {
+        "movieId": { "type": "string" },
+        "title": { "type": "string" },
+        "mediaType": { "type": "string", "enum": ["movie", "tv"] },
+        "reportedBy": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "resolved"] }
+      },
+      "required": ["movieId", "title", "mediaType", "status", "timestamp"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "A notification for the user.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string", "enum": ["info", "success", "warning", "error"] },
+        "read": { "type": "boolean" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "link": { "type": "string", "description": "Optional link to navigate to." }
+      },
+      "required": ["title", "message", "type", "read", "timestamp"]
+    },
+    "UserRating": {
+      "title": "User Rating",
+      "description": "A rating given by a user to a movie or series.",
+      "type": "object",
+      "properties": {
+        "movieId": { "type": "string" },
+        "userId": { "type": "string" },
+        "rating": { "type": "number", "description": "Rating from 1 to 5." },
+        "genreIds": { "type": "array", "items": { "type": "number" } },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["movieId", "rating", "timestamp", "userId"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "A text review left by a user.",
+      "type": "object",
+      "properties": {
+        "movieId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "likes": { "type": "number" }
+      },
+      "required": ["movieId", "userId", "userName", "content", "timestamp"]
+    },
+    "ReviewLike": {
+      "title": "Review Like",
+      "description": "A like given by a user to a review.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "timestamp"]
+    },
+    "Profile": {
+      "title": "User Profile (Sub-profile)",
+      "description": "A sub-profile within a user account (e.g., for different family members).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "avatar": { "type": "string", "description": "URL or identifier for the profile avatar." },
+        "isKids": { "type": "boolean", "description": "Whether this profile is in Kids Mode." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "avatar", "isKids"]
+    }
+  },
+  "firestore": {
+    "/reports/{reportId}": {
+      "schema": "ContentReport",
+      "description": "Collection of content issue reports."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents."
+    },
+    "/users/{userId}/profiles/{profileId}": {
+      "schema": "Profile",
+      "description": "Sub-profiles for the user."
+    },
+    "/users/{userId}/profiles/{profileId}/favorites/{movieId}": {
+      "schema": "UserMovie",
+      "description": "Movies saved in the sub-profile's list."
+    },
+    "/users/{userId}/profiles/{profileId}/recentlyWatched/{movieId}": {
+      "schema": "UserMovie",
+      "description": "Movies recently watched by the sub-profile."
+    },
+    "/users/{userId}/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User notifications."
+    },
+    "/ratings/{ratingId}": {
+      "schema": "UserRating",
+      "description": "Ratings given by users (ID is userId_movieId)."
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "User reviews."
+    },
+    "/reviews/{reviewId}/likes/{userId}": {
+      "schema": "ReviewLike",
+      "description": "Tracks which users liked which review."
+    }
+  }
+}
